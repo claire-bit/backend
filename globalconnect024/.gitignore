@@ -1,0 +1,11 @@
+# Ignore all .pyc files in all folders
+**/*.pyc
+
+# Ignore all __pycache__ directories everywhere
+**/__pycache__/
+
+# virtual env
+Virtualenv/
+
+# Ignore the SQLite database
+**/db.sqlite3
