@@ -1,0 +1,55 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.pyc
+
+# Virtual environment
+env/
+venv/
+Virtualenv/
+.venv/
+ENV/
+*.egg-info/
+dist/
+build/
+
+# Django
+*.log
+local_settings.py
+db.sqlite3
+media/
+staticfiles/
+*.pot
+*.pyc
+*.pyo
+
+# PostgreSQL dumps
+*.sql
+*.dump
+*.pgsql
+*.psql
+
+# VSCode/IDE
+.vscode/
+.idea/
+*.sublime-workspace
+*.sublime-project
+
+# macOS / Linux
+.DS_Store
+*.swp
+
+# Windows
+Thumbs.db
+ehthumbs.db
+desktop.ini
+
+# Node (if using npm or yarn in backend)
+node_modules/
+
+# Secrets
+.env
+.env.local
+.env.*.local
