@@ -4,8 +4,14 @@
 # Ignore all __pycache__ directories everywhere
 **/__pycache__/
 
-# virtual env
+# virtual environments (common names)
+venv/
+env/
 Virtualenv/
 
 # Ignore the SQLite database
 **/db.sqlite3
+
+# Environment variables
+.env
+*.env
