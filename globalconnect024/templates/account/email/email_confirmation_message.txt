@@ -1,8 +1,0 @@
-Hi {{ user.get_full_name|default:user.username }},
-
-Thanks for registering on 024 Global Connect!  
-Please verify your email address by clicking the link below:
-
-{{ activate_url }}
-
-If you didn't register, feel free to ignore this email.

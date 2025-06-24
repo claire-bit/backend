@@ -45,3 +45,12 @@ class RegistrationSerializer(serializers.ModelSerializer):
 
         send_activation_email(request, user)  # ✅ Send activation email
         return user
+
+
+class UserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = [
+            'id', 'username', 'first_name', 'last_name',
+            'email', 'is_active', 'date_joined'
+        ]

@@ -2,4 +2,6 @@
 from django.contrib.auth.models import AbstractUser
 
 class CustomUser(AbstractUser):
-    pass  # Extend later if needed
+    class Meta:
+        verbose_name = 'Global User'
+        verbose_name_plural = 'Global Users'

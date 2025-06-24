@@ -16,11 +16,25 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from rest_framework_simplejwt.views import TokenRefreshView
+from users.views import EmailOrUsernameTokenObtainPairView  # ✅ custom login view
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+
+    # ✅ Custom token login that supports email or username
+    path('api/token/', EmailOrUsernameTokenObtainPairView.as_view(), name='token_obtain_pair'),
+
+    # ✅ Refresh token endpoint remains the same
+    path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
+
+    # ✅ Your user routes
     path('api/users/', include('users.urls')),
-    path('api/accounts/', include('users.urls')), 
+
+
+    # path('api/contact/', include('contact.urls')),  # Contact form (optional)
+    # path('api/blogs/', include('blogs.urls')),      # Blog APIs
+    # path('api/', include('core.urls')),
 
 ]
 
