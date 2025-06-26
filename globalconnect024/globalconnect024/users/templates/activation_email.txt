@@ -1,0 +1,14 @@
+Welcome to 024Global Connect!
+
+Hello {{ user.first_name|default:user.username }},
+
+Thank you for registering with 024Global Connect. To complete your registration and activate your account, please click the link below:
+
+http://{{ site.domain }}{% url 'django_registration_activate' activation_key %}
+
+This activation link will expire in {{ expiration_days }} days. Please activate your account before then.
+
+If you didn't create an account with 024Global Connect, please ignore this email.
+
+Best regards,
+The 024Global Connect Team
