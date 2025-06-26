@@ -10,6 +10,9 @@ from .views import (
     PasswordResetRequestView,
     PasswordResetConfirmView,
     UpdateProfileView,
+    ContactFormView,
+    BlogPostCreateView,
+    UserBlogPostListView,
 )
 
 urlpatterns = [
@@ -32,4 +35,7 @@ urlpatterns = [
     # ✅ Password reset
     path('password/reset/', PasswordResetRequestView.as_view(), name='password_reset'),
     path('password/reset/confirm/', PasswordResetConfirmView.as_view(), name='password_reset_confirm'),
+    path('contact/', ContactFormView.as_view(), name='contact-form'),
+    path('api/blogs/create/', BlogPostCreateView.as_view(), name='create-blog'),
+    path('blogs/my-posts/', UserBlogPostListView.as_view(), name='user-blogs'),
 ]

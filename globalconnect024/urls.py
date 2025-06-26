@@ -31,8 +31,6 @@ urlpatterns = [
     # ✅ Your user routes
     path('api/users/', include('users.urls')),
 
-
-    # path('api/contact/', include('contact.urls')),  # Contact form (optional)
     # path('api/blogs/', include('blogs.urls')),      # Blog APIs
     # path('api/', include('core.urls')),
 

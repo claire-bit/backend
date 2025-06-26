@@ -3,6 +3,7 @@ from rest_framework import serializers
 from django.contrib.auth.password_validation import validate_password
 from rest_framework.validators import UniqueValidator
 from users.utils import send_activation_email  # ✅ import this
+from .models import BlogPost
 
 User = get_user_model()
 
@@ -54,3 +55,8 @@ class UserSerializer(serializers.ModelSerializer):
             'id', 'username', 'first_name', 'last_name',
             'email', 'is_active', 'date_joined'
         ]
+
+class BlogPostSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = BlogPost
+        fields = '__all__'        

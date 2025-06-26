@@ -1,6 +1,6 @@
 # accounts/views.py 
 
-from rest_framework import generics, status
+from rest_framework import generics, status, permissions
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
@@ -16,6 +16,8 @@ from rest_framework.generics import RetrieveUpdateAPIView
 from .serializers import RegistrationSerializer, UserSerializer
 from .tokens import account_activation_token  # your custom token
 from .utils import send_activation_email
+from .models import BlogPost
+from .serializers import BlogPostSerializer
 
 User = get_user_model()
 
@@ -160,3 +162,57 @@ class EmailOrUsernameTokenObtainSerializer(TokenObtainPairSerializer):
 
 class EmailOrUsernameTokenObtainPairView(TokenObtainPairView):
     serializer_class = EmailOrUsernameTokenObtainSerializer
+
+class ContactFormView(APIView):
+    def post(self, request):
+        name = request.data.get("name")
+        email = request.data.get("email")
+        phone = request.data.get("phone")
+        subject = request.data.get("subject")
+        message = request.data.get("message")
+
+        if not name or not email or not message:
+            return Response(
+                {"error": "Name, email and message are required."},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        # Combine message content
+        full_message = f"""
+You have a new contact form submission:
+
+Name: {name}
+Email: {email}
+Phone: {phone or 'N/A'}
+Subject: {subject}
+Message:
+{message}
+        """
+
+        try:
+            send_mail(
+                subject=f"New Contact Message: {subject}",
+                message=full_message,
+                from_email=settings.DEFAULT_FROM_EMAIL,
+                recipient_list=["024globalconnect@gmail.com"],
+                fail_silently=False,
+            )
+        except Exception as e:
+            return Response(
+                {"error": "Failed to send email. Please try again later."},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
+
+        return Response({"message": "Your message has been sent successfully!"}, status=status.HTTP_200_OK)
+
+
+class BlogPostCreateView(generics.CreateAPIView):
+    queryset = BlogPost.objects.all()
+    serializer_class = BlogPostSerializer
+
+class UserBlogPostListView(generics.ListAPIView):
+    serializer_class = BlogPostSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        return BlogPost.objects.filter(author=self.request.user)
