@@ -1,5 +1,8 @@
 # accounts/views.py 
+from django.db.models import Sum
+from .models import Referral, Order
 
+from rest_framework.decorators import api_view, permission_classes
 from rest_framework import generics, status
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
@@ -14,6 +17,7 @@ from django.conf import settings
 from rest_framework.generics import RetrieveUpdateAPIView
 
 from .serializers import RegistrationSerializer, UserSerializer
+from rest_framework.serializers import ModelSerializer
 from .tokens import account_activation_token  # your custom token
 from .utils import send_activation_email
 
@@ -160,3 +164,49 @@ class EmailOrUsernameTokenObtainSerializer(TokenObtainPairSerializer):
 
 class EmailOrUsernameTokenObtainPairView(TokenObtainPairView):
     serializer_class = EmailOrUsernameTokenObtainSerializer
+
+@api_view(["GET"])
+@permission_classes([IsAuthenticated])
+def affiliate_summary(request):
+    user = request.user
+
+    if user.role != 'user':
+        return Response({"detail": "Only affiliates can access this."}, status=403)
+
+    total_commission = Referral.objects.filter(affiliate=user).aggregate(
+        total=Sum("commission_earned")
+    )["total"] or 0
+
+    total_referrals = Order.objects.filter(affiliate=user).count()
+    total_purchases = Order.objects.filter(affiliate=user, status="paid").count()
+
+    conversion_rate = round((total_purchases / total_referrals) * 100, 2) if total_referrals > 0 else 0
+
+    return Response({
+        "total_commission": total_commission,
+        "total_referrals": total_referrals,
+        "total_purchases": total_purchases,
+        "conversion_rate": conversion_rate
+    })  
+
+class ReferralSerializer(ModelSerializer):
+    product_name = serializers.CharField(source="order.product.name", read_only=True)
+    buyer_username = serializers.CharField(source="order.buyer.username", read_only=True)
+    purchase_amount = serializers.DecimalField(source="order.amount", max_digits=10, decimal_places=2)
+
+    class Meta:
+        model = Referral
+        fields = ["id", "created_at", "product_name", "buyer_username", "purchase_amount", "commission_earned"]
+
+@api_view(["GET"])
+@permission_classes([IsAuthenticated])
+def affiliate_referrals(request):
+    user = request.user
+
+    if user.role != "user":
+        return Response({"detail": "Only affiliates can access this."}, status=403)
+
+    referrals = Referral.objects.filter(affiliate=user).select_related("order__product", "order__buyer")
+    serializer = ReferralSerializer(referrals, many=True)
+    return Response(serializer.data)  
+

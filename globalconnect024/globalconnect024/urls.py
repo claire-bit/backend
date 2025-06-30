@@ -16,6 +16,9 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from django.conf import settings
+from django.conf.urls.static import static
+
 from rest_framework_simplejwt.views import TokenRefreshView
 from users.views import EmailOrUsernameTokenObtainPairView  # ✅ custom login view
 
@@ -30,12 +33,9 @@ urlpatterns = [
 
     # ✅ Your user routes
     path('api/users/', include('users.urls')),
-
-
-    # path('api/contact/', include('contact.urls')),  # Contact form (optional)
-    # path('api/blogs/', include('blogs.urls')),      # Blog APIs
-    # path('api/', include('core.urls')),
-
 ]
 
+# ✅ Serve media files in development
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 

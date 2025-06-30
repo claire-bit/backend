@@ -18,11 +18,19 @@ class RegistrationSerializer(serializers.ModelSerializer):
     )
     confirm_password = serializers.CharField(write_only=True, required=True)
 
+    country = serializers.CharField(required=False)
+    city = serializers.CharField(required=False)
+    promotion_methods = serializers.ListField(
+        child=serializers.CharField(), required=False
+    )
+    role = serializers.ChoiceField(choices=[('user', 'Affiliate'), ('vendor', 'Vendor')], default='user')
+
     class Meta:
         model = User
         fields = [
-            'first_name', 'last_name', 'username',
-            'email', 'password', 'confirm_password'
+            'first_name', 'last_name', 'username', 'email',
+            'password', 'confirm_password',
+            'country', 'city', 'promotion_methods', 'role'
         ]
 
     def validate(self, attrs):
@@ -35,11 +43,15 @@ class RegistrationSerializer(serializers.ModelSerializer):
         request = self.context.get('request')
 
         user = User.objects.create_user(
-            first_name=validated_data['first_name'],
-            last_name=validated_data['last_name'],
-            username=validated_data['username'],
-            email=validated_data['email'],
-            password=validated_data['password'],
+            first_name=validated_data.get('first_name'),
+            last_name=validated_data.get('last_name'),
+            username=validated_data.get('username'),
+            email=validated_data.get('email'),
+            password=validated_data.get('password'),
+            country=validated_data.get('country', ''),
+            city=validated_data.get('city', ''),
+            promotion_methods=validated_data.get('promotion_methods', []),
+            role=validated_data.get('role', 'user'),
             is_active=False  # 🔒 Require email activation
         )
 
@@ -51,6 +63,6 @@ class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = [
-            'id', 'username', 'first_name', 'last_name',
-            'email', 'is_active', 'date_joined'
+            'id', 'username', 'first_name', 'last_name', 'email',
+            'is_active', 'date_joined', 'role', 'country', 'city', 'promotion_methods'
         ]
