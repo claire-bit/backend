@@ -49,7 +49,10 @@ class Referral(models.Model):
     affiliate = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='referrals')
     order = models.OneToOneField(Order, on_delete=models.CASCADE)
     commission_earned = models.DecimalField(max_digits=10, decimal_places=2)
+    is_approved = models.BooleanField(default=False)  # ✅ Admin approval
+    is_paid = models.BooleanField(default=False)      # ✅ Payout tracking
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f"Referral by {self.affiliate.username}"
+        return f"Referral by {self.affiliate.username} - {self.order.product.name}"
+       

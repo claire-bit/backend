@@ -1,19 +1,3 @@
-"""
-URL configuration for globalconnect024 project.
-
-The `urlpatterns` list routes URLs to views. For more information please see:
-    https://docs.djangoproject.com/en/5.2/topics/http/urls/
-Examples:
-Function views
-    1. Add an import:  from my_app import views
-    2. Add a URL to urlpatterns:  path('', views.home, name='home')
-Class-based views
-    1. Add an import:  from other_app.views import Home
-    2. Add a URL to urlpatterns:  path('', Home.as_view(), name='home')
-Including another URLconf
-    1. Import the include() function: from django.urls import include, path
-    2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
-"""
 from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
@@ -25,17 +9,18 @@ from users.views import EmailOrUsernameTokenObtainPairView  # ✅ custom login v
 urlpatterns = [
     path('admin/', admin.site.urls),
 
-    # ✅ Custom token login that supports email or username
+    # ✅ Auth
     path('api/token/', EmailOrUsernameTokenObtainPairView.as_view(), name='token_obtain_pair'),
-
-    # ✅ Refresh token endpoint remains the same
     path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
 
-    # ✅ Your user routes
-    path('api/users/', include('users.urls')),
+    # ✅ Merge users and admin views here
+    path('api/', include('users.urls')),  # 👈 this exposes /api/admin/users/ etc. correctly
+
+    # ✅ Other apps
+    path('api/products/', include('products.urls')),
+    path('api/', include('category.urls')),
 ]
 
-# ✅ Serve media files in development
+# ✅ Serve media in development
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
-

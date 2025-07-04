@@ -17,6 +17,8 @@ def send_activation_email(request, user):
     # Get current domain from request (or hardcode if needed)
     domain = get_current_site(request).domain
     activation_link = f"http://{domain}/api/users/auth/activate/{uid}/{token}/"
+     # ✅ Print to terminal for dev use
+    print("🔗 Activation link:", activation_link)
 
     # Render email content
     html_message = render_to_string('activation_email.html', {

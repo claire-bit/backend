@@ -2,6 +2,7 @@ from django.contrib.auth import get_user_model
 from rest_framework import serializers
 from django.contrib.auth.password_validation import validate_password
 from rest_framework.validators import UniqueValidator
+from rest_framework_simplejwt.tokens import RefreshToken
 from users.utils import send_activation_email  # ✅ import this
 
 User = get_user_model()
@@ -66,3 +67,33 @@ class UserSerializer(serializers.ModelSerializer):
             'id', 'username', 'first_name', 'last_name', 'email',
             'is_active', 'date_joined', 'role', 'country', 'city', 'promotion_methods'
         ]
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
+class EmailOrUsernameTokenObtainSerializer(TokenObtainPairSerializer):
+    def validate(self, attrs):
+        login = attrs.get("username")
+        password = attrs.get("password")
+
+        user = User.objects.filter(username=login).first() or User.objects.filter(email=login).first()
+        if not user or not user.check_password(password):
+            raise serializers.ValidationError({"detail": "No active account found with the given credentials"})
+        if not user.is_active:
+            raise serializers.ValidationError({"detail": "Account is inactive"})
+
+        refresh = RefreshToken.for_user(user)
+        access = str(refresh.access_token)
+
+        return {
+            "refresh": str(refresh),
+            "access": access,
+            "user": {
+                "id": user.id,
+                "username": user.username,
+                "first_name": user.first_name,
+                "last_name": user.last_name,
+                "email": user.email,
+                "role": user.role,
+                "country": user.country,
+                "city": user.city,
+                "promotion_methods": user.promotion_methods,
+            }
+        }
