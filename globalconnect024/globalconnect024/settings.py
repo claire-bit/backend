@@ -6,6 +6,7 @@ import os
 from pathlib import Path
 from datetime import timedelta
 import environ
+from decouple import config
 
 # Initialize environment variables
 env = environ.Env(DEBUG=(bool, False))
@@ -39,6 +40,7 @@ INSTALLED_APPS = [
     'users',
     'products',
     'category',
+    'orders',
 ]
 
 AUTH_USER_MODEL = 'users.CustomUser'
@@ -161,3 +163,13 @@ DEFAULT_FROM_EMAIL = env('DEFAULT_FROM_EMAIL', default='024Global <024globalconn
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
+
+
+
+
+MPESA_ENV = config("MPESA_ENV", default="sandbox")
+MPESA_CONSUMER_KEY = config("MPESA_CONSUMER_KEY")
+MPESA_CONSUMER_SECRET = config("MPESA_CONSUMER_SECRET")
+MPESA_SHORTCODE = config("MPESA_SHORTCODE")
+MPESA_PASSKEY = config("MPESA_PASSKEY")
+MPESA_CALLBACK_URL = config("MPESA_CALLBACK_URL")

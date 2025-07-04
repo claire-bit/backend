@@ -1,7 +1,7 @@
 from django.contrib import admin 
 from django.contrib.auth.admin import UserAdmin
 from django.utils.translation import gettext_lazy as _
-from .models import CustomUser, Product, Order, Referral
+from .models import CustomUser
 
 @admin.register(CustomUser)
 class CustomUserAdmin(UserAdmin):
@@ -11,7 +11,7 @@ class CustomUserAdmin(UserAdmin):
 
     fieldsets = (
         (_('Login Info'), {'fields': ('username', 'password')}),
-        (_('Personal Info'), {'fields': ('first_name', 'last_name', 'email', 'role')}),
+        (_('Personal Info'), {'fields': ('first_name', 'last_name', 'email', 'role', 'country', 'city', 'promotion_methods')}),
         (_('Permissions'), {
             'fields': ('is_active', 'is_staff', 'is_superuser', 'groups', 'user_permissions'),
         }),
@@ -26,7 +26,3 @@ class CustomUserAdmin(UserAdmin):
     )
 
     ordering = ('username',)
-
-admin.site.register(Product)
-admin.site.register(Order)
-admin.site.register(Referral)

@@ -1,5 +1,5 @@
 from django.db.models import Sum 
-from .models import Referral, Order
+from orders.models import Referral, Order
 from products.models import Product
 
 from rest_framework.decorators import api_view, permission_classes

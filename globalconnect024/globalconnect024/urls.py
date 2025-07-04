@@ -19,6 +19,8 @@ urlpatterns = [
     # ✅ Other apps
     path('api/products/', include('products.urls')),
     path('api/', include('category.urls')),
+    path("api/", include("orders.urls")),
+
 ]
 
 # ✅ Serve media in development
